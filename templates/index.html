@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GitHub Webhook Events</title>
+  <script>
+    async function fetchEvents() {
+      const res = await fetch('/events');
+      const data = await res.json();
+      const list = document.getElementById('events');
+      list.innerHTML = '';
+      data.reverse().forEach(e => {
+        let text = '';
+        if (e.type === 'push') {
+          text = `${e.author} pushed to ${e.to_branch} on ${e.timestamp}`;
+        } else if (e.type === 'pull_request') {
+          text = `${e.author} submitted a pull request from ${e.from_branch} to ${e.to_branch} on ${e.timestamp}`;
+        }
+        const li = document.createElement('li');
+        li.textContent = text;
+        list.appendChild(li);
+      });
+    }
+
+    setInterval(fetchEvents, 15000); // Every 15 sec
+    window.onload = fetchEvents;
+  </script>
+</head>
+<body>
+  <h1>Webhook Events</h1>
+  <ul id="events"></ul>
+</body>
+</html>
